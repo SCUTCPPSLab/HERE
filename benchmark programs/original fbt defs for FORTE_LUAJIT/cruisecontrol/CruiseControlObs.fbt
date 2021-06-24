@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd" >
+<FBType Name="CruiseControlObs" >
+  <Identification Standard="61499-2" />
+  <VersionInfo Organization="Rockwell Automation" Version="0.2" Author="JHC" Date="2003-12-05" Remarks="Renamed from NEWCOMPFB." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.1" Author="JHC" Date="2002-01-08" Remarks="Added DLY FB as example." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.0" Author="JHC" Date="2000-05-27" />
+  <CompilerInfo header="package fb.rt.benchmarks.cruisecontrol;" >
+  </CompilerInfo>
+  <InterfaceList>
+    <EventInputs>
+      <Event Name="cclock" >
+      </Event>
+      <Event Name="set" >
+      </Event>
+      <Event Name="off" >
+      </Event>
+      <Event Name="resume" >
+      </Event>
+      <Event Name="quickAccel" >
+      </Event>
+      <Event Name="quickDecel" >
+      </Event>
+      <Event Name="brakePressed" >
+      </Event>
+      <Event Name="accelPressed" >
+      </Event>
+      <Event Name="accelReleased" >
+      </Event>
+    </EventInputs>
+    <EventOutputs>
+      <Event Name="speed" >
+      </Event>
+      <Event Name="speedSet" >
+      </Event>
+      <Event Name="throttleChg" >
+      </Event>
+      <Event Name="regulOff" >
+      </Event>
+      <Event Name="regulStdby" >
+      </Event>
+      <Event Name="regulSet" >
+      </Event>
+      <Event Name="regulResume" >
+      </Event>
+      <Event Name="violated" >
+      </Event>
+    </EventOutputs>
+    <InputVars>
+      <VarDeclaration Name="time" Type="UDINT" Comment="10ms tick" />
+      <VarDeclaration Name="rotaryCount" Type="UINT" />
+      <VarDeclaration Name="throttleOffset" Type="SINT" />
+    </InputVars>
+    <OutputVars>
+      <VarDeclaration Name="speedVal" Type="INT" Comment="Output event qualifier" />
+      <VarDeclaration Name="cruiseSpeed" Type="INT" />
+      <VarDeclaration Name="throttleVal" Type="SINT" />
+    </OutputVars>
+  </InterfaceList>
+  <FBNetwork >
+    <FB Name="speedo" Type="SpeedGauge" x="664.7059" y="817.64703" />
+    <FB Name="controller" Type="CruiseManager" x="1447.0588" y="35.294117" />
+    <FB Name="throttle" Type="Throttle" x="3088.2354" y="147.05882" />
+    <FB Name="observer" Type="Activate" x="2676.4705" y="1476.4706" />
+    <EventConnections>
+      <Connection Source="cclock" Destination="speedo.cclock" dx1="535.2941" />
+      <Connection Source="speedo.speed" Destination="speed" dx1="1229.4117" />
+      <Connection Source="set" Destination="controller.set" dx1="1352.9412" />
+      <Connection Source="off" Destination="controller.off" dx1="1358.8235" />
+      <Connection Source="resume" Destination="controller.resume" dx1="1288.2352" />
+      <Connection Source="quickAccel" Destination="controller.quickAccel" dx1="1252.9412" />
+      <Connection Source="quickDecel" Destination="controller.quickDecel" dx1="1247.0588" />
+      <Connection Source="brakePressed" Destination="controller.brakePressed" dx1="1205.8823" />
+      <Connection Source="cclock" Destination="controller.cclock" dx1="1317.647" />
+      <Connection Source="controller.regulOff" Destination="throttle.cruiseOff" dx1="488.2353" />
+      <Connection Source="controller.regulStdby" Destination="throttle.cruiseOff" dx1="252.94118" />
+      <Connection Source="controller.regulSet" Destination="throttle.cruiseOn" dx1="252.94118" />
+      <Connection Source="controller.regulResume" Destination="throttle.cruiseOn" dx1="505.88235" />
+      <Connection Source="controller.speedSet" Destination="throttle.speedSet" dx1="523.5294" />
+      <Connection Source="controller.speedSet" Destination="speedSet" dx1="2341.1765" />
+      <Connection Source="cclock" Destination="throttle.cclock" dx1="2958.8235" />
+      <Connection Source="accelPressed" Destination="throttle.accelPressed" dx1="2852.9412" />
+      <Connection Source="accelReleased" Destination="throttle.accelReleased" dx1="2841.1765" />
+      <Connection Source="throttle.throttleChg" Destination="throttleChg" dx1="3994.1177" />
+      <Connection Source="controller.regulOff" Destination="regulOff" dx1="2323.5293" />
+      <Connection Source="controller.regulStdby" Destination="regulStdby" dx1="2358.8235" />
+      <Connection Source="controller.regulSet" Destination="regulSet" dx1="2323.5293" />
+      <Connection Source="controller.regulResume" Destination="regulResume" dx1="2394.1177" />
+      <Connection Source="controller.regulSet" Destination="observer.regulSet" dx1="464.70587" />
+      <Connection Source="observer.violated" Destination="violated" dx1="3347.0588" />
+    </EventConnections>
+    <DataConnections>
+      <Connection Source="time" Destination="speedo.time" dx1="552.94116" />
+      <Connection Source="rotaryCount" Destination="speedo.rotaryCount" dx1="441.17645" />
+      <Connection Source="speedo.speedVal" Destination="speedVal" dx1="1276.4706" />
+      <Connection Source="speedo.speedVal" Destination="controller.speed" dx1="317.64706" />
+      <Connection Source="speedo.speedVal" Destination="throttle.speed" dx1="400.0" />
+      <Connection Source="controller.cruiseSpeed" Destination="throttle.cruiseSpeed" dx1="647.05884" />
+      <Connection Source="controller.cruiseSpeed" Destination="cruiseSpeed" dx1="2376.4705" />
+      <Connection Source="throttleOffset" Destination="throttle.throttleOffset" dx1="2841.1765" />
+      <Connection Source="throttle.throttleVal" Destination="throttleVal" dx1="3976.4705" />
+      <Connection Source="speedo.speedVal" Destination="observer.speedVal" dx1="776.4706" />
+    </DataConnections>
+  </FBNetwork>
+</FBType>

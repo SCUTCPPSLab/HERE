@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd">
+<FBType Name="WaterMonitor_HCECC">
+  <Identification Standard="61499-2" />
+  <VersionInfo Date="2003-12-05" Organization="Rockwell Automation" Author="JHC" Remarks="Renamed from NEWCOMPFB." Version="0.2" />
+  <CompilerInfo header="package fb.rt.benchmarks.watermonitor;" />
+  <InterfaceList>
+    <EventInputs>
+      <Event Name="ms" Comment="millisecond" />
+      <Event Name="tstButton" />
+      <Event Name="resetButton" />
+    </EventInputs>
+    <EventOutputs>
+      <Event Name="standby" />
+      <Event Name="operating" />
+      <Event Name="shutdown" />
+      <Event Name="test" />
+      <Event Name="slfTstInterval" />
+      <Event Name="reset1" />
+      <Event Name="tstInterval" />
+      <Event Name="shutdownLock" />
+      <Event Name="range" />
+    </EventOutputs>
+    <InputVars>
+      <VarDeclaration Name="waterLevel" Type="USINT" />
+    </InputVars>
+    <OutputVars>
+      <VarDeclaration Name="withinLimits" Type="BOOL" />
+      <VarDeclaration Name="withinHys" Type="BOOL" />
+    </OutputVars>
+  </InterfaceList>
+  <FBNetwork>
+    <FB x="4054.2476" Name="SensorMonitor" Type="WaterMonitorSensor_HCECC" y="1905.8826">
+      <Parameter Name="lowLimit" Value="100" />
+      <Parameter Name="highLimit" Value="200" />
+    </FB>
+    <FB x="1735.2941" Name="tstButtonTimer" Type="Timer" y="176.47058">
+      <Parameter Name="timeout" Value="500" />
+    </FB>
+    <FB x="1782.3529" Name="tstModeTimer" Type="Timer" y="1564.7058">
+      <Parameter Name="timeout" Value="5000" />
+    </FB>
+    <FB x="1794.1176" Name="shutdownModeTImer" Type="Timer" y="2258.8235">
+      <Parameter Name="timeout" Value="200" />
+    </FB>
+    <FB x="1776.4706" Name="resetButtonTimer" Type="Timer" y="864.7059">
+      <Parameter Name="timeout" Value="3000" />
+    </FB>
+    <FB x="5964.056" Name="selector" Type="Multiplexer" y="1917.9739" />
+    <EventConnections>
+      <Connection Destination="SensorMonitor.ms" Source="ms" dx1="2288.2354" />
+      <Connection Destination="tstButtonTimer.ms" Source="ms" dx1="1647.0588" />
+      <Connection Destination="resetButtonTimer.ms" Source="ms" dx1="1688.2352" />
+      <Connection Destination="tstModeTimer.ms" Source="ms" dx1="1694.1177" />
+      <Connection Destination="tstButtonTimer.startStop" Source="tstButton" dx1="1558.8235" />
+      <Connection Destination="resetButtonTimer.startStop" Source="resetButton" dx1="1564.7058" />
+      <Connection Destination="SensorMonitor.slfTstInterval" Source="tstButtonTimer.timed" dx1="1172.2222"  UnitDelayed="true"/>
+      <Connection Destination="SensorMonitor.reset1" Source="resetButtonTimer.timed" dx1="888.2353"  UnitDelayed="true"/>
+      <Connection Destination="SensorMonitor.tstInterval" Source="tstModeTimer.timed" dx1="588.2353"  UnitDelayed="true"/>
+      <Connection Destination="SensorMonitor.shutdownLock" Source="shutdownModeTImer.timed" dx1="888.2353"  UnitDelayed="true"/>
+      <Connection Destination="shutdownModeTImer.ms" Source="ms" dx1="1705.8823" />
+      <Connection Destination="selector.standby" Source="SensorMonitor.standby" dx1="94.117645" />
+      <Connection Destination="selector.operating" Source="SensorMonitor.operating" dx1="123.52941" />
+      <Connection Destination="selector.shutdown" Source="SensorMonitor.shutdown" dx1="129.41176" />
+      <Connection Destination="selector.test" Source="SensorMonitor.test" dx1="135.29411" />
+      <Connection dy="1599.9999" Destination="shutdownModeTImer.startStop" Source="selector.shutdownTimer" dx2="194.11765" dx1="41.176468"  UnitDelayed="true"/>
+      <Connection dy="1772.2222" Destination="tstModeTimer.startStop" Source="selector.testTimer" dx2="241.17647" dx1="82.352936"  UnitDelayed="true"/>
+      <Connection Destination="standby" Source="SensorMonitor.standby" dx1="4441.1763" />
+      <Connection Destination="operating" Source="SensorMonitor.operating" dx1="4464.7056" />
+      <Connection Destination="shutdown" Source="SensorMonitor.shutdown" dx1="4464.7056" />
+      <Connection Destination="test" Source="SensorMonitor.test" dx1="4382.353" />
+      <Connection Destination="slfTstInterval" Source="tstButtonTimer.timed" dx1="2264.7058" />
+      <Connection Destination="tstInterval" Source="tstModeTimer.timed" dx1="2270.5881" />
+      <Connection Destination="reset1" Source="resetButtonTimer.timed" dx1="2205.8823" />
+      <Connection Destination="shutdownLock" Source="shutdownModeTImer.timed" dx1="2335.2942" />
+    </EventConnections>
+    <DataConnections>
+      <Connection Destination="SensorMonitor.waterLevel" Source="waterLevel" dx1="2170.5881" />
+      <Connection Destination="withinLimits" Source="SensorMonitor.withinLimits" dx1="3300.0" />
+      <Connection Destination="withinHys" Source="SensorMonitor.withinHys" dx1="3264.7058" />
+    </DataConnections>
+  </FBNetwork>
+</FBType>

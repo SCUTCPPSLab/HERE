@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd" >
+<FBType Name="DrillStation_FBDKTestBench" Comment="Composite Function Block Type" >
+  <Identification Standard="61499-2" />
+  <VersionInfo Organization="Rockwell Automation" Version="0.2" Author="JHC" Date="2003-12-05" Remarks="Renamed from NEWCOMPFB." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.1" Author="JHC" Date="2002-01-08" Remarks="Added DLY FB as example." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.0" Author="JHC" Date="2000-05-27" />
+  <CompilerInfo header="package fb.rt.benchmarks.DrillStation;" >
+  </CompilerInfo>
+  <InterfaceList>
+    <EventInputs>
+      <Event Name="INIT" Comment="Initialization Request" >
+      </Event>
+    </EventInputs>
+  </InterfaceList>
+  <FBNetwork >
+    <FB Name="Interface" Type="DrillStation_FBDKInterface" x="1105.5555" y="461.11108" />
+    <FB Name="UUT" Type="DrillStation" x="3066.6665" y="461.11108" />
+    <EventConnections>
+      <Connection Source="INIT" Destination="Interface.INITTest" dx1="999.99994" />
+      <Connection Source="Interface.INIT" Destination="UUT.INIT" dx1="172.22221" />
+      <Connection Source="Interface.REQ" Destination="UUT.REQ" dx1="294.44443" />
+      <Connection Source="Interface.SlideTime" Destination="UUT.SlideTime" dx1="416.66666" />
+      <Connection Source="Interface.DrillMove" Destination="UUT.DrillMove" dx1="538.88885" />
+      <Connection Source="Interface.DrillDone" Destination="UUT.DrillDone" dx1="661.1111" />
+    </EventConnections>
+  </FBNetwork>
+</FBType>

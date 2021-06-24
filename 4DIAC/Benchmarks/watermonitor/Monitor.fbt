@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd" >
+<FBType Name="Monitor" >
+  <Identification Standard="61499-2" />
+  <VersionInfo Organization="Rockwell Automation" Version="0.2" Author="JHC" Date="2003-12-04" Remarks="Renamed for better indexing." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.1" Author="JHC" Date="2002-11-05" Remarks="Corrected missing ST element in Algorithm REQ." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.0" Author="JHC" Date="2000-05-30" />
+  <CompilerInfo header="package fb.rt.benchmarks.watermonitor;" >
+  </CompilerInfo>
+  <InterfaceList>
+    <EventInputs>
+      <Event Name="slfTstInterval" >
+      </Event>
+      <Event Name="reset1" >
+      </Event>
+      <Event Name="tstInterval" >
+      </Event>
+      <Event Name="shutdownLock" >
+      </Event>
+      <Event Name="range" >
+        <With Var="withinLimits" />
+        <With Var="withinHys" />
+      </Event>
+    </EventInputs>
+    <EventOutputs>
+      <Event Name="standby" >
+      </Event>
+      <Event Name="operating" >
+      </Event>
+      <Event Name="shutdown" >
+      </Event>
+      <Event Name="test" >
+      </Event>
+    </EventOutputs>
+    <InputVars>
+      <VarDeclaration Name="withinLimits" Type="BOOL" InitialValue="true" />
+      <VarDeclaration Name="withinHys" Type="BOOL" InitialValue="true" />
+    </InputVars>
+  </InterfaceList>
+  <BasicFB>
+    <ECC >
+      <ECState Name="STANDBY" Comment="Initial State" x="2617.647" y="164.70587" >
+      </ECState>
+      <ECState Name="SHUTDOWN" x="2617.647" y="588.2353" >
+        <ECAction Output="shutdown" />
+      </ECState>
+      <ECState Name="OPERATING" x="1423.5294" y="1058.8235" >
+        <ECAction Output="operating" />
+      </ECState>
+      <ECState Name="TEST" x="4176.4707" y="1058.8235" >
+        <ECAction Output="test" />
+      </ECState>
+      <ECTransition Source="STANDBY" Destination="TEST" Condition="slfTstInterval" x="3688.235" y="729.41174" />
+      <ECTransition Source="STANDBY" Destination="OPERATING" Condition="reset1&#38;withinLimits" x="1423.5294" y="164.70587" />
+      <ECTransition Source="TEST" Destination="TEST" Condition="slfTstInterval" x="4176.4707" y="1235.2941" />
+      <ECTransition Source="TEST" Destination="STANDBY" Condition="tstInterval" x="4176.4707" y="164.70587" />
+      <ECTransition Source="OPERATING" Destination="TEST" Condition="slfTstInterval" x="3223.5293" y="1058.8235" />
+      <ECTransition Source="OPERATING" Destination="SHUTDOWN" Condition="range&#38;not withinLimits" x="1811.7646" y="588.2353" />
+      <ECTransition Source="SHUTDOWN" Destination="TEST" Condition="slfTstInterval" x="3500.0" y="847.05884" />
+      <ECTransition Source="SHUTDOWN" Destination="OPERATING" Condition="range&#38;withinHys" x="2029.4117" y="811.7647" />
+      <ECTransition Source="SHUTDOWN" Destination="STANDBY" Condition="shutdownLock" x="2617.647" y="376.47058" />
+    </ECC>
+  </BasicFB>
+</FBType>

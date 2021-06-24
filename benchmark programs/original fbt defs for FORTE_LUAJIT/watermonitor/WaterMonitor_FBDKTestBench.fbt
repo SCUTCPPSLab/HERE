@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd" >
+<FBType Name="WaterMonitor_FBDKTestBench" Comment="Composite Function Block Type" >
+  <Identification Standard="61499-2" />
+  <VersionInfo Organization="Rockwell Automation" Version="0.2" Author="JHC" Date="2003-12-05" Remarks="Renamed from NEWCOMPFB." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.1" Author="JHC" Date="2002-01-08" Remarks="Added DLY FB as example." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.0" Author="JHC" Date="2000-05-27" />
+  <CompilerInfo header="package fb.rt.benchmarks.watermonitor;" >
+  </CompilerInfo>
+  <InterfaceList>
+    <EventInputs>
+      <Event Name="INIT" Comment="Initialization Request" >
+      </Event>
+    </EventInputs>
+  </InterfaceList>
+  <FBNetwork >
+    <FB Name="Interface" Type="WaterMonitor_FBDKInterface" x="1105.5555" y="461.11108" />
+    <FB Name="UUT" Type="WaterMonitor" x="3066.6665" y="461.11108" />
+    <EventConnections>
+      <Connection Source="INIT" Destination="Interface.INIT" dx1="999.99994" />
+      <Connection Source="Interface.ms" Destination="UUT.ms" dx1="144.44444" />
+      <Connection Source="Interface.tstButton" Destination="UUT.tstButton" dx1="216.66666" />
+      <Connection Source="Interface.resetButton" Destination="UUT.resetButton" dx1="288.8889" />
+    </EventConnections>
+    <DataConnections>
+      <Connection Source="Interface.waterLevel" Destination="UUT.waterLevel" dx1="666.6666" />
+    </DataConnections>
+  </FBNetwork>
+</FBType>

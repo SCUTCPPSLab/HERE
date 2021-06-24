@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd" >
+<FBType Name="DrillStation" >
+  <Identification Standard="61499-2" />
+  <VersionInfo Organization="Rockwell Automation" Version="0.2" Author="JHC" Date="2003-12-05" Remarks="Renamed from NEWCOMPFB." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.1" Author="JHC" Date="2002-01-08" Remarks="Added DLY FB as example." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.0" Author="JHC" Date="2000-05-27" />
+  <CompilerInfo header="package fb.rt.benchmarks.DrillStation;" >
+  </CompilerInfo>
+  <InterfaceList>
+    <EventInputs>
+      <Event Name="INIT" Comment="Initialization Request" >
+      </Event>
+      <Event Name="REQ" Comment="Normal Execution Request" >
+      </Event>
+      <Event Name="SlideTime" >
+      </Event>
+      <Event Name="DrillMove" >
+      </Event>
+      <Event Name="DrillDone" >
+      </Event>
+    </EventInputs>
+    <EventOutputs>
+      <Event Name="SliderStatus" >
+        <With Var="SliderOpenClose" />
+      </Event>
+    </EventOutputs>
+    <OutputVars>
+      <VarDeclaration Name="SliderOpenClose" Type="BOOL" />
+    </OutputVars>
+  </InterfaceList>
+  <FBNetwork >
+    <FB Name="Drill" Type="Drill" x="2723.5293" y="400.0" />
+    <FB Name="Slider" Type="Slider" x="1270.5883" y="288.2353" />
+    <EventConnections>
+      <Connection Source="Drill.Status" Destination="Slider.DrillStat" dx1="135.29411" dx2="594.1176" dy="-358.82352" />
+      <Connection Source="Drill.Done" Destination="Slider.FinishDrill" dx1="76.47059" dx2="505.88235" dy="-411.7647" />
+      <Connection Source="REQ" Destination="Slider.REQ" dx1="1164.7058" />
+      <Connection Source="SlideTime" Destination="Slider.SlideTime" dx1="1082.3529" />
+      <Connection Source="DrillMove" Destination="Drill.DrillMove" dx1="2541.1765" />
+      <Connection Source="DrillDone" Destination="Drill.DrillDone" dx1="2541.1765" />
+      <Connection Source="Slider.Status" Destination="SliderStatus" dx1="2111.7646" />
+      <Connection Source="Slider.InPlace" Destination="Drill.REQ" dx1="217.64705"/>
+    </EventConnections>
+    <DataConnections>
+      <Connection Source="Drill.UP_DOWN" Destination="Slider.ReadyNot" dx1="88.23529" dx2="88.23529" dy="258.82352" />
+      <Connection Source="Slider.OpenClose" Destination="SliderOpenClose" dx1="2176.4705" />
+    </DataConnections>
+  </FBNetwork>
+</FBType>

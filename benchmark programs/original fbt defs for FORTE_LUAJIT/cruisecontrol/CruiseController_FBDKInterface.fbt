@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd" >
+<FBType Name="CruiseController_FBDKInterface" Comment="Basic Function Block Type" >
+  <Identification Standard="61499-2" />
+  <VersionInfo Organization="Rockwell Automation" Version="0.2" Author="JHC" Date="2003-12-04" Remarks="Renamed for better indexing." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.1" Author="JHC" Date="2002-11-05" Remarks="Corrected missing ST element in Algorithm REQ." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.0" Author="JHC" Date="2000-05-30" />
+  <CompilerInfo header="package fb.rt.benchmarks.cruisecontrol;" >
+  </CompilerInfo>
+  <InterfaceList>
+    <EventInputs>
+      <Event Name="INIT" Comment="Initialization Request" >
+      </Event>
+    </EventInputs>
+    <EventOutputs>
+      <Event Name="cclock" >
+        <With Var="time" />
+        <With Var="rotaryCount" />
+        <With Var="throttleOffset" />
+      </Event>
+      <Event Name="set" >
+        <With Var="time" />
+        <With Var="rotaryCount" />
+        <With Var="throttleOffset" />
+      </Event>
+      <Event Name="off" >
+        <With Var="time" />
+        <With Var="rotaryCount" />
+        <With Var="throttleOffset" />
+      </Event>
+      <Event Name="resume" >
+        <With Var="time" />
+        <With Var="rotaryCount" />
+        <With Var="throttleOffset" />
+      </Event>
+      <Event Name="quickAccel" >
+        <With Var="time" />
+        <With Var="rotaryCount" />
+        <With Var="throttleOffset" />
+      </Event>
+      <Event Name="quickDecel" >
+        <With Var="time" />
+        <With Var="rotaryCount" />
+        <With Var="throttleOffset" />
+      </Event>
+      <Event Name="brakePressed" >
+        <With Var="time" />
+        <With Var="rotaryCount" />
+        <With Var="throttleOffset" />
+      </Event>
+      <Event Name="accelPressed" >
+        <With Var="time" />
+        <With Var="rotaryCount" />
+        <With Var="throttleOffset" />
+      </Event>
+      <Event Name="accelReleased" >
+        <With Var="time" />
+        <With Var="rotaryCount" />
+        <With Var="throttleOffset" />
+      </Event>
+    </EventOutputs>
+    <OutputVars>
+      <VarDeclaration Name="time" Type="UDINT" Comment="10ms tick" />
+      <VarDeclaration Name="rotaryCount" Type="UINT" />
+      <VarDeclaration Name="throttleOffset" Type="SINT" />
+    </OutputVars>
+  </InterfaceList>
+  <BasicFB>
+    <ECC >
+      <ECState Name="START" Comment="Initial State" x="555.55554" y="427.77777" >
+      </ECState>
+      <ECState Name="REQ" Comment="Normal execution" x="216.66666" y="755.55554" >
+        <ECAction Algorithm="REQ" />
+      </ECState>
+      <ECTransition Source="START" Destination="REQ" Condition="INIT" x="555.55554" y="600.0" />
+      <ECTransition Source="REQ" Destination="START" Condition="1" x="216.66666" y="427.77777" />
+    </ECC>
+  <Algorithm Name="REQ" Comment="Normally executed algorithm" >
+    <Other Language="Java" Text="// Fire randomly generated inputs into the system&#10;final File file = new File(&#34;src&#34; + File.separator + &#34;benchmarks&#34; + File.separator + &#34;Vectors&#34; + File.separator +&#34;CruiseController_Vector.txt&#34;);&#10;BufferedReader testVector = null;&#10;Integer tempInt = new Integer(0);&#10;String inputPath = file.getAbsolutePath();&#10;System.out.println();&#10;System.out.println(&#34;Full Test using: &#34; + inputPath);&#10;int testLoop = 0;&#10;long totalTime = 0;&#10;long avgFull = 0;&#10;boolean TestBenchOnly = false;&#10;for(testLoop = 0; testLoop &#60; 30; testLoop++)&#10;{&#10;if( testLoop == 15 )&#10;{&#10;// End of full testing&#10;TestBenchOnly = true;&#10;avgFull = (totalTime / 15);&#10;System.out.println(&#34;\nAverage = &#34; + avgFull);&#10;totalTime = 0;&#10;System.out.println(&#34;\n\nTestBench Only using: &#34; + inputPath);&#10;&#10;}&#10;&#10;&#10;try &#10;{&#10;testVector = new BufferedReader(new FileReader(inputPath));&#10;} &#10;catch (FileNotFoundException e) &#10;{&#10;e.printStackTrace();&#10;}&#10;// RUN TEST&#10;try &#10;{&#10;String line;&#10;long startTime = System.nanoTime();&#10;while ((line = testVector.readLine()) != null) &#10;{&#10; String inputs[] = line.split(&#34; &#34;);&#10;&#10;// Data first&#10;time.value = Integer.parseInt(inputs[9]);&#10;rotaryCount.value = Integer.parseInt(inputs[10]);&#10;throttleOffset.value = (byte)Integer.parseInt(inputs[11]);&#10;&#10;&#10;if( inputs[0].equals(&#34;1&#34;))&#10;{&#10;if( !TestBenchOnly )&#10;cclock.serviceEvent(this);&#10;}&#10;if( inputs[1].equals(&#34;1&#34;))&#10;{&#10;if( !TestBenchOnly )&#10;set.serviceEvent(this);&#10;}&#10;if( inputs[2].equals(&#34;1&#34;))&#10;{&#10;if( !TestBenchOnly )&#10;off.serviceEvent(this);&#10;}&#10;if( inputs[3].equals(&#34;1&#34;))&#10;{&#10;if( !TestBenchOnly )&#10;resume.serviceEvent(this);&#10;}&#10;if( inputs[4].equals(&#34;1&#34;))&#10;{&#10;if( !TestBenchOnly )&#10;quickAccel.serviceEvent(this);&#10;}&#10;if( inputs[5].equals(&#34;1&#34;))&#10;{&#10;if( !TestBenchOnly )&#10;quickDecel.serviceEvent(this);&#10;}&#10;if( inputs[6].equals(&#34;1&#34;))&#10;{&#10;if( !TestBenchOnly )&#10;brakePressed.serviceEvent(this);&#10;}&#10;if( inputs[7].equals(&#34;1&#34;))&#10;{&#10;if( !TestBenchOnly )&#10;accelPressed.serviceEvent(this);&#10;}&#10;if( inputs[8].equals(&#34;1&#34;))&#10;{&#10;if( !TestBenchOnly )&#10;accelReleased.serviceEvent(this);&#10;}&#10;&#10;&#10;}&#10;long endTime = System.nanoTime();&#10;System.out.printf(&#34;Time taken: %d\n&#34;, endTime - startTime);&#10;totalTime += endTime - startTime;&#10;testVector.close();&#10;} &#10;catch (IOException e) &#10;{&#10;e.printStackTrace();&#10;}&#10;&#10;&#10;&#10;}&#10;&#10;// End of TestBench testing&#10;System.out.println(&#34;\nAverage = &#34; + (totalTime / 15));&#10;&#10;System.out.println(&#34;\nFinal Time = &#34; + (avgFull - (totalTime / 15)));&#10;" />
+  </Algorithm>
+  </BasicFB>
+</FBType>

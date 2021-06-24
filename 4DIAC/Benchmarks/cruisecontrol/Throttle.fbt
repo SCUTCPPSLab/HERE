@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd" >
+<FBType Name="Throttle" >
+  <Identification Standard="61499-2" />
+  <VersionInfo Organization="Rockwell Automation" Version="0.2" Author="JHC" Date="2003-12-04" Remarks="Renamed for better indexing." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.1" Author="JHC" Date="2002-11-05" Remarks="Corrected missing ST element in Algorithm REQ." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.0" Author="JHC" Date="2000-05-30" />
+  <CompilerInfo header="package fb.rt.benchmarks.cruisecontrol;" >
+  </CompilerInfo>
+  <InterfaceList>
+    <EventInputs>
+      <Event Name="cruiseOff" >
+        <With Var="cruiseSpeed" />
+      </Event>
+      <Event Name="cruiseOn" >
+        <With Var="cruiseSpeed" />
+        <With Var="speed" />
+      </Event>
+      <Event Name="speedSet" >
+        <With Var="cruiseSpeed" />
+        <With Var="speed" />
+      </Event>
+      <Event Name="cclock" Comment="10ms tick" >
+        <With Var="speed" />
+        <With Var="throttleOffset" />
+      </Event>
+      <Event Name="accelPressed" >
+        <With Var="throttleOffset" />
+      </Event>
+      <Event Name="accelReleased" >
+        <With Var="throttleOffset" />
+      </Event>
+    </EventInputs>
+    <EventOutputs>
+      <Event Name="throttleChg" >
+        <With Var="throttleVal" />
+      </Event>
+    </EventOutputs>
+    <InputVars>
+      <VarDeclaration Name="cruiseSpeed" Type="INT" InitialValue="0" Comment="desired speed" />
+      <VarDeclaration Name="speed" Type="INT" InitialValue="0" Comment="actual speed" />
+      <VarDeclaration Name="throttleOffset" Type="SINT" InitialValue="0" Comment="offset angle" />
+    </InputVars>
+    <OutputVars>
+      <VarDeclaration Name="throttleVal" Type="SINT" InitialValue="0" Comment="throttle angle" />
+    </OutputVars>
+  </InterfaceList>
+  <BasicFB>
+    <InternalVars>
+      <VarDeclaration Name="prevOffset" Type="SINT" InitialValue="0" />
+      <VarDeclaration Name="tmp" Type="SINT" InitialValue="0" />
+    </InternalVars>
+    <ECC >
+      <ECState Name="NORMAL" x="1558.8235" y="405.88235" >
+        <ECAction Algorithm="normal" Output="throttleChg" />
+      </ECState>
+      <ECState Name="CRUISE" x="1576.4706" y="1188.2352" >
+        <ECAction Algorithm="cruise" Output="throttleChg" />
+      </ECState>
+      <ECState Name="ACCEL" x="2688.2354" y="782.3529" >
+        <ECAction Algorithm="accel" Output="throttleChg" />
+      </ECState>
+      <ECTransition Source="NORMAL" Destination="CRUISE" Condition="cruiseOn" x="1323.5294" y="817.64703" />
+      <ECTransition Source="NORMAL" Destination="NORMAL" Condition="accelPressed" x="1558.8235" y="176.47058" />
+      <ECTransition Source="NORMAL" Destination="NORMAL" Condition="accelReleased" x="1976.4706" y="211.76471" />
+      <ECTransition Source="NORMAL" Destination="NORMAL" Condition="cclock" x="1200.0" y="405.88235" />
+      <ECTransition Source="CRUISE" Destination="NORMAL" Condition="cruiseOff" x="1817.647" y="823.5294" />
+      <ECTransition Source="CRUISE" Destination="ACCEL" Condition="accelPressed" x="2194.1177" y="782.3529" />
+      <ECTransition Source="CRUISE" Destination="CRUISE" Condition="cruiseOn" x="1152.9412" y="1188.2352" />
+      <ECTransition Source="CRUISE" Destination="CRUISE" Condition="speedSet" x="1576.4706" y="1423.5294" />
+      <ECTransition Source="CRUISE" Destination="CRUISE" Condition="cclock" x="1841.1764" y="1376.4706" />
+      <ECTransition Source="ACCEL" Destination="NORMAL" Condition="cruiseOff" x="2158.8235" y="641.17645" />
+      <ECTransition Source="ACCEL" Destination="CRUISE" Condition="accelReleased" x="2688.2354" y="917.64703" />
+      <ECTransition Source="ACCEL" Destination="ACCEL" Condition="cclock" x="2688.2354" y="605.8823" />
+    </ECC>
+  <Algorithm Name="normal" >
+    <ST Text="throttleVal := throttleOffset;&#10;prevOffset := 0;&#10;" />
+  </Algorithm>
+  <Algorithm Name="accel" >
+    <ST Text="throttleVal := throttleVal + throttleOffset - prevOffset;&#10;prevOffset := throttleOffset;&#10;" />
+  </Algorithm>
+  <Algorithm Name="cruise" >
+    <ST Text="tmp := (cruiseSpeed - speed);&#10;tmp := tmp * 3;&#10; IF tmp > 45 THEN&#10;    tmp := 45;&#10;ELSIF tmp &#60; 0 THEN&#10;    tmp := 0;&#10; END_IF;&#10; throttleVal := tmp;&#10;" />
+  </Algorithm>
+  </BasicFB>
+</FBType>

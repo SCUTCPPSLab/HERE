@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd" >
+<FBType Name="Multiplexer" >
+  <Identification Standard="61499-2" />
+  <VersionInfo Organization="Rockwell Automation" Version="0.2" Author="JHC" Date="2003-12-04" Remarks="Renamed for better indexing." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.1" Author="JHC" Date="2002-11-05" Remarks="Corrected missing ST element in Algorithm REQ." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.0" Author="JHC" Date="2000-05-30" />
+  <CompilerInfo header="package fb.rt.benchmarks.watermonitor;" >
+  </CompilerInfo>
+  <InterfaceList>
+    <EventInputs>
+      <Event Name="standby" >
+      </Event>
+      <Event Name="operating" >
+      </Event>
+      <Event Name="shutdown" >
+      </Event>
+      <Event Name="test" >
+      </Event>
+    </EventInputs>
+    <EventOutputs>
+      <Event Name="testTimer" Comment="system has gone in/out of TEST mode" >
+      </Event>
+      <Event Name="shutdownTimer" Comment="system has gone in/out of SHUTDOWN mode" >
+      </Event>
+    </EventOutputs>
+  </InterfaceList>
+  <BasicFB>
+    <ECC >
+      <ECState Name="DONTCARE" x="2400.0" y="288.2353" >
+      </ECState>
+      <ECState Name="SHUTDOWN" x="3335.294" y="964.7059" >
+        <ECAction Output="shutdownTimer" />
+      </ECState>
+      <ECState Name="TEST" Comment="Normal execution" x="1252.9412" y="964.7059" >
+        <ECAction Output="testTimer" />
+      </ECState>
+      <ECTransition Source="DONTCARE" Destination="TEST" Condition="test" x="1252.9412" y="288.2353" />
+      <ECTransition Source="DONTCARE" Destination="SHUTDOWN" Condition="shutdown" x="3335.294" y="288.2353" />
+      <ECTransition Source="TEST" Destination="TEST" Condition="test" x="1252.9412" y="1182.3529" />
+      <ECTransition Source="TEST" Destination="SHUTDOWN" Condition="shutdown" x="2741.1765" y="964.7059" />
+      <ECTransition Source="TEST" Destination="DONTCARE" Condition="operating" x="1605.8823" y="429.41174" />
+      <ECTransition Source="TEST" Destination="DONTCARE" Condition="standby" x="2005.8823" y="517.64703" />
+      <ECTransition Source="SHUTDOWN" Destination="SHUTDOWN" Condition="shutdown" x="3335.294" y="1194.1177" />
+      <ECTransition Source="SHUTDOWN" Destination="TEST" Condition="test" x="2282.3528" y="735.2941" />
+      <ECTransition Source="SHUTDOWN" Destination="DONTCARE" Condition="operating" x="3070.5881" y="464.70587" />
+      <ECTransition Source="SHUTDOWN" Destination="DONTCARE" Condition="standby" x="2894.1177" y="641.17645" />
+    </ECC>
+  </BasicFB>
+</FBType>

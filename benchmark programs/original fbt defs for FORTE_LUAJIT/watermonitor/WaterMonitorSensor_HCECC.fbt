@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE FBType SYSTEM "HCECC.dtd">
+<FBType Name="WaterMonitorSensor_HCECC" Comment="Model a conveyor">
+  <Identification Standard="61499-2" />
+  <VersionInfo Date="2003-12-04" Organization="Rockwell Automation" Author="JHC" Remarks="Renamed for better indexing." Version="0.2" />
+  <CompilerInfo header="package fb.rt.benchmarks.watermonitor;" />
+  <InterfaceList>
+    <EventInputs>
+      <Event Name="ms" Comment="millisecond" >
+        <With Var="waterLevel" />
+        <With Var="lowLimit" />
+        <With Var="highLimit" />
+      </Event>
+	       <Event Name="slfTstInterval" >
+      </Event>
+      <Event Name="reset1" >
+      </Event>
+      <Event Name="tstInterval" >
+      </Event>
+      <Event Name="shutdownLock" >
+      </Event>
+    </EventInputs>
+    <EventOutputs>
+       <Event Name="standby" >
+      </Event>
+      <Event Name="operating" >
+      </Event>
+      <Event Name="shutdown" >
+      </Event>
+      <Event Name="test" >
+      </Event>     
+    </EventOutputs>
+    <InputVars>
+      <VarDeclaration Name="waterLevel" Type="USINT" InitialValue="150" />
+      <VarDeclaration Name="lowLimit" Type="USINT" InitialValue="100" />
+      <VarDeclaration Name="highLimit" Type="USINT" InitialValue="200" />
+    </InputVars>
+	    <OutputVars>
+      <VarDeclaration Name="withinLimits" Type="BOOL" InitialValue="true" />
+      <VarDeclaration Name="withinHys" Type="BOOL" InitialValue="true" />
+    </OutputVars>
+  </InterfaceList>
+  <BasicFB>
+    <HCECC>
+      <ECC Name="Sensor">
+       <ECState Name="START" Comment="Initial State" x="2752.9412" y="758.8235" >
+      </ECState>
+      <ECState Name="INHYS" Comment="in hysterisis" x="2764.7058" y="229.41176" >
+        <ECAction Algorithm="inHys" />
+      </ECState>
+      <ECState Name="INLIMITS" Comment="within limts" x="2752.9412" y="1823.5294" >
+      </ECState>
+      <ECState Name="OUTLIMITS" Comment="outside limits" x="811.7647" y="764.7059" >
+      </ECState>
+      <ECState Name="OUTHYS" Comment="outside hysterisis" x="5047.0586" y="764.7059" >
+      </ECState>
+      <ECTransition Source="START" Destination="INHYS" Condition="ms&#38;(waterLevel>(lowLimit+5) and waterLevel&#60;(highLimit-5))" x="2764.7058" y="594.1176" />
+      <ECTransition Source="START" Destination="OUTHYS" Condition="ms&#38;(waterLevel&#60;=(lowLimit+5) or waterLevel>=(highLimit-5))" x="3811.7646" y="764.7059" />
+      <ECTransition Source="START" Destination="INLIMITS" Condition="ms&#38;(waterLevel>lowLimit and waterLevel&#60;highLimit)" x="2752.9412" y="1276.4706" />
+      <ECTransition Source="START" Destination="OUTLIMITS" Condition="ms&#38;(waterLevel&#60;=lowLimit or waterLevel>=highLimit)" x="1835.2941" y="764.7059" />
+      <ECTransition Source="INHYS" Destination="OUTHYS" Condition="ms&#38;(waterLevel&#60;=(lowLimit+5) or waterLevel>=(highLimit-5))" x="5047.0586" y="229.41176" />
+      <ECTransition Source="OUTHYS" Destination="INHYS" Condition="ms&#38;(waterLevel>(lowLimit+5) and waterLevel&#60;(highLimit-5))" x="3729.4116" y="470.58823" />
+      <ECTransition Source="OUTHYS" Destination="INLIMITS" Condition="ms&#38;(waterLevel>lowLimit and waterLevel&#60;highLimit)" x="5047.0586" y="1823.5294" />
+      <ECTransition Source="INLIMITS" Destination="OUTHYS" Condition="ms&#38;(waterLevel&#60;=(lowLimit+5) or waterLevel>=(highLimit-5))" x="4094.1177" y="1082.3529" />
+      <ECTransition Source="INLIMITS" Destination="OUTLIMITS" Condition="ms&#38;(waterLevel&#60;=lowLimit or waterLevel>=highLimit)" x="811.7647" y="1823.5294" />
+      <ECTransition Source="OUTLIMITS" Destination="INLIMITS" Condition="ms&#38;(waterLevel>lowLimit and waterLevel&#60;highLimit)" x="1776.4706" y="1452.9412" />
+      </ECC>
+      <ECC Name="Monitor">
+       <ECState Name="STANDBY" Comment="Initial State" x="2617.647" y="164.70587" >
+      </ECState>
+      <ECState Name="SHUTDOWN" x="2617.647" y="588.2353" >
+        <ECAction Output="shutdown" />
+      </ECState>
+      <ECState Name="OPERATING" x="1423.5294" y="1058.8235" >
+        <ECAction Output="operating" />
+      </ECState>
+      <ECState Name="TEST" x="4176.4707" y="1058.8235" >
+        <ECAction Output="test" />
+      </ECState>
+      <ECTransition Source="STANDBY" Destination="TEST" Condition="slfTstInterval" x="3688.235" y="729.41174" />
+      <ECTransition Source="STANDBY" Destination="OPERATING" Condition="reset1&#38;withinLimits" x="1423.5294" y="164.70587" />
+      <ECTransition Source="TEST" Destination="TEST" Condition="slfTstInterval" x="4176.4707" y="1235.2941" />
+      <ECTransition Source="TEST" Destination="STANDBY" Condition="tstInterval" x="4176.4707" y="164.70587" />
+      <ECTransition Source="OPERATING" Destination="TEST" Condition="slfTstInterval" x="3223.5293" y="1058.8235" />
+      <ECTransition Source="OPERATING" Destination="SHUTDOWN" Condition="not withinLimits" x="1811.7646" y="588.2353" />
+      <ECTransition Source="SHUTDOWN" Destination="TEST" Condition="slfTstInterval" x="3500.0" y="847.05884" />
+      <ECTransition Source="SHUTDOWN" Destination="OPERATING" Condition="withinHys" x="2029.4117" y="811.7647" />
+      <ECTransition Source="SHUTDOWN" Destination="STANDBY" Condition="shutdownLock" x="2617.647" y="376.47058" />
+      </ECC>
+    </HCECC>
+	  <Algorithm Name="inHys" Comment="Normally executed algorithm" >
+    <ST Text="withinHys := TRUE;&#10;withinLimits := TRUE;&#10;" />
+  </Algorithm>
+  <Algorithm Name="outHys" >
+    <ST Text="withinHys := FALSE;&#10;" />
+  </Algorithm>
+  <Algorithm Name="inLimits" Comment="Initialization algorithm" >
+    <ST Text="withinLimits := TRUE;&#10;" />
+  </Algorithm>
+  <Algorithm Name="outLimits" >
+    <ST Text="withinLimits := FALSE;&#10;withinHys := FALSE;&#10;" />
+  </Algorithm>
+  </BasicFB>
+</FBType>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2013 (http://www.altova.com) by  () -->
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd">
+<FBType Name="Slider" Comment="Slider for the drill">
+	<Identification Standard="61499-2"/>
+	<VersionInfo Organization="Rockwell Automation" Version="0.2" Author="JHC" Date="2003-12-04" Remarks="Renamed for better indexing."/>
+	<VersionInfo Organization="Rockwell Automation" Version="0.1" Author="JHC" Date="2002-11-05" Remarks="Corrected missing ST element in Algorithm REQ."/>
+	<VersionInfo Organization="Rockwell Automation" Version="0.0" Author="JHC" Date="2000-05-30"/>
+	<CompilerInfo header="package fb.rt.benchmarks.DrillStation;">
+  </CompilerInfo>
+	<InterfaceList>
+		<EventInputs>
+			<Event Name="REQ" Comment="Normal Execution Request">
+      </Event>
+			<Event Name="SlideTime" Comment="Simulate the sliding time">
+      </Event>
+			<Event Name="FinishDrill">
+      </Event>
+			<Event Name="DrillStat" Comment="Status of the drill">
+				<With Var="ReadyNot"/>
+			</Event>
+		</EventInputs>
+		<EventOutputs>
+			<Event Name="Status">
+				<With Var="OpenClose"/>
+			</Event>
+			<Event Name="InPlace" Comment="Object is in place for drilling">
+      </Event>
+		</EventOutputs>
+		<InputVars>
+			<VarDeclaration Name="ReadyNot" Type="BOOL" Comment="ready: true, not ready: false"/>
+		</InputVars>
+		<OutputVars>
+			<VarDeclaration Name="OpenClose" Type="BOOL" InitialValue="true" Comment="true: open, false: close"/>
+		</OutputVars>
+	</InterfaceList>
+	<BasicFB>
+		<ECC>
+			<ECState Name="START" Comment="Initial State" x="558.82355" y="164.70587">
+				<ECAction Algorithm="INIT" Output="Status"/>
+			</ECState>
+			<ECState Name="REQ" Comment="Normal execution" x="1005.8823" y="541.17645">
+				<ECAction Algorithm="REQ" Output="Status"/>
+			</ECState>
+			<ECState Name="Drilling" x="1005.8823" y="876.4706">
+				<ECAction Output="InPlace"/>
+			</ECState>
+			<ECState Name="ReturnSlide" x="1005.8823" y="1252.9412">
+      </ECState>
+			<ECState Name="WaitForDrill" x="1005.8823" y="1676.4706">
+      </ECState>
+			<ECTransition Source="START" Destination="REQ" Condition="EVAL_EV(Slider_REQ)" x="776.4706" y="335.2941"/>
+			<ECTransition Source="REQ" Destination="Drilling" Condition="EVAL_EV(Slider_SlideTime)" x="1005.8823" y="682.3529"/>
+			<ECTransition Source="Drilling" Destination="ReturnSlide" Condition="EVAL_EV(Slider_FinishDrill)" x="1005.8823" y="1047.0588"/>
+			<ECTransition Source="ReturnSlide" Destination="WaitForDrill" Condition="EVAL_EV(Slider_SlideTime)" x="1005.8823" y="1423.5294"/>
+			<ECTransition Source="WaitForDrill" Destination="START" Condition="VAL_OF_ReadyNot()" x="558.82355" y="1188.2352"/>
+			<ECTransition Source="WaitForDrill" Destination="START" Condition="EVAL_EV(Slider_DrillStat)&#38;&#38;VAL_OF_ReadyNot()" x="558.82355" y="1676.4706"/>
+		</ECC>
+		<Algorithm Name="INIT" Comment="Initialization algorithm">
+			<ST Text="VAL_OF_OpenClose() = 1;&#10;"/>
+		</Algorithm>
+		<Algorithm Name="REQ" Comment="Normally executed algorithm">
+			<ST Text="VAL_OF_OpenClose() = 0;&#10;"/>
+		</Algorithm>
+	</BasicFB>
+</FBType>

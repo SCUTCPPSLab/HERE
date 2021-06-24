@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd" >
+<FBType Name="CruiseManager" Comment="Manages the state of the cruise control" >
+  <Identification Standard="61499-2" />
+  <VersionInfo Organization="Rockwell Automation" Version="0.2" Author="JHC" Date="2003-12-04" Remarks="Renamed for better indexing." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.1" Author="JHC" Date="2002-11-05" Remarks="Corrected missing ST element in Algorithm REQ." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.0" Author="JHC" Date="2000-05-30" />
+  <CompilerInfo header="package fb.rt.benchmarks.cruisecontrol;" >
+  </CompilerInfo>
+  <InterfaceList>
+    <EventInputs>
+      <Event Name="set" >
+        <With Var="speed" />
+      </Event>
+      <Event Name="off" >
+        <With Var="speed" />
+      </Event>
+      <Event Name="resume" >
+        <With Var="speed" />
+      </Event>
+      <Event Name="quickAccel" Comment="increase desired speed by 5km/h" >
+        <With Var="speed" />
+      </Event>
+      <Event Name="quickDecel" >
+        <With Var="speed" />
+      </Event>
+      <Event Name="brakePressed" >
+        <With Var="speed" />
+      </Event>
+      <Event Name="cclock" Comment="10ms tick" >
+        <With Var="speed" />
+      </Event>
+    </EventInputs>
+    <EventOutputs>
+      <Event Name="regulOff" >
+        <With Var="cruiseSpeed" />
+      </Event>
+      <Event Name="regulSet" >
+        <With Var="cruiseSpeed" />
+      </Event>
+      <Event Name="regulStdby" >
+      </Event>
+      <Event Name="regulResume" >
+        <With Var="cruiseSpeed" />
+      </Event>
+      <Event Name="speedSet" >
+        <With Var="cruiseSpeed" />
+      </Event>
+    </EventOutputs>
+    <InputVars>
+      <VarDeclaration Name="speed" Type="INT" InitialValue="0" />
+    </InputVars>
+    <OutputVars>
+      <VarDeclaration Name="cruiseSpeed" Type="INT" InitialValue="0" />
+    </OutputVars>
+  </InterfaceList>
+  <BasicFB>
+    <InternalVars>
+      <VarDeclaration Name="desiredSpeed" Type="INT" InitialValue="0" />
+    </InternalVars>
+    <ECC >
+      <ECState Name="OFF" Comment="Initial State" x="2600.0" y="158.82353" >
+        <ECAction Algorithm="off" Output="regulOff" />
+      </ECState>
+      <ECState Name="SET" x="1152.9412" y="1005.8823" >
+        <ECAction Algorithm="set" Output="regulSet" />
+      </ECState>
+      <ECState Name="STDBY" x="3441.1765" y="1029.4117" >
+        <ECAction Algorithm="standby" Output="regulStdby" />
+      </ECState>
+      <ECState Name="RESUME" x="3758.8235" y="417.64706" >
+        <ECAction Algorithm="resume" Output="regulResume" />
+      </ECState>
+      <ECState Name="ACCEL" x="311.7647" y="2117.647" >
+        <ECAction Algorithm="accel" Output="speedSet" />
+      </ECState>
+      <ECState Name="DECEL" x="2111.7646" y="1594.1177" >
+        <ECAction Algorithm="decel" Output="speedSet" />
+      </ECState>
+      <ECTransition Source="OFF" Destination="SET" Condition="set&#38;speed>50&#38;speed&#60;170" x="2052.9412" y="517.64703" />
+      <ECTransition Source="SET" Destination="OFF" Condition="off" x="1670.5883" y="411.7647" />
+      <ECTransition Source="SET" Destination="SET" Condition="set&#38;speed>50&#38;speed&#60;170" x="829.41174" y="800.0" />
+      <ECTransition Source="SET" Destination="STDBY" Condition="brakePressed" x="2488.2354" y="1029.4117" />
+      <ECTransition Source="SET" Destination="ACCEL" Condition="quickAccel" x="1152.9412" y="1482.3529" />
+      <ECTransition Source="SET" Destination="DECEL" Condition="quickDecel" x="1552.9412" y="1347.0588" />
+      <ECTransition Source="STDBY" Destination="OFF" Condition="off" x="2894.1177" y="464.70587" />
+      <ECTransition Source="STDBY" Destination="SET" Condition="set&#38;speed>50&#38;speed&#60;170" x="2594.1177" y="882.3529" />
+      <ECTransition Source="STDBY" Destination="RESUME" Condition="resume" x="3441.1765" y="417.64706" />
+      <ECTransition Source="RESUME" Destination="OFF" Condition="off" x="3264.7058" y="323.52942" />
+      <ECTransition Source="RESUME" Destination="SET" Condition="set&#38;speed>50&#38;speed&#60;170" x="2611.7646" y="747.05884" />
+      <ECTransition Source="RESUME" Destination="STDBY" Condition="brakePressed" x="3758.8235" y="676.4706" />
+      <ECTransition Source="RESUME" Destination="ACCEL" Condition="quickAccel" x="5200.0" y="2117.647" />
+      <ECTransition Source="RESUME" Destination="DECEL" Condition="quickDecel" x="2794.1177" y="1294.1177" />
+      <ECTransition Source="ACCEL" Destination="OFF" Condition="off" x="311.7647" y="158.82353" />
+      <ECTransition Source="ACCEL" Destination="SET" Condition="set&#38;speed>50&#38;speed&#60;170" x="723.5294" y="1282.3529" />
+      <ECTransition Source="ACCEL" Destination="STDBY" Condition="brakePressed" x="3441.1765" y="1858.8235" />
+      <ECTransition Source="ACCEL" Destination="ACCEL" Condition="quickAccel" x="311.7647" y="2341.1765" />
+      <ECTransition Source="ACCEL" Destination="DECEL" Condition="quickDecel" x="1305.8823" y="1788.2352" />
+      <ECTransition Source="DECEL" Destination="OFF" Condition="off" x="2600.0" y="500.0" />
+      <ECTransition Source="DECEL" Destination="SET" Condition="set&#38;speed>50&#38;speed&#60;170" x="1864.7058" y="1170.5883" />
+      <ECTransition Source="DECEL" Destination="STDBY" Condition="brakePressed" x="3141.1765" y="1382.3529" />
+      <ECTransition Source="DECEL" Destination="ACCEL" Condition="quickAccel" x="1400.0" y="1923.5294" />
+      <ECTransition Source="DECEL" Destination="DECEL" Condition="quickDecel" x="2111.7646" y="1852.9412" />
+    </ECC>
+  <Algorithm Name="off" >
+    <ST Text="desiredSpeed := 0;&#10;cruiseSpeed := 0;&#10;" />
+  </Algorithm>
+  <Algorithm Name="set" >
+    <ST Text="desiredSpeed := speed;&#10;cruiseSpeed := desiredSpeed;&#10;" />
+  </Algorithm>
+  <Algorithm Name="resume" >
+    <ST Text="cruiseSpeed := desiredSpeed;&#10;" />
+  </Algorithm>
+  <Algorithm Name="standby" >
+    <ST Text="cruiseSpeed := 0;&#10;" />
+  </Algorithm>
+  <Algorithm Name="accel" >
+    <ST Text="IF desiredSpeed &#60; 165 THEN &#10;    desiredSpeed := desiredSpeed + 5;&#10;    cruiseSpeed := desiredSpeed;&#10;END_IF;&#10;" />
+  </Algorithm>
+  <Algorithm Name="decel" >
+    <ST Text="IF desiredSpeed >= 5 THEN &#10;    desiredSpeed := desiredSpeed - 5;&#10;    cruiseSpeed := desiredSpeed;&#10;ELSE desiredSpeed := 0;&#10; END_IF;&#10;" />
+  </Algorithm>
+  </BasicFB>
+</FBType>

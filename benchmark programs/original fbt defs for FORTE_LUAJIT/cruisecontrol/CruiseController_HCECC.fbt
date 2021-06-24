@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE FBType SYSTEM "HCECC.dtd">
+<FBType Name="CruiseController_HCECC" Comment="Basic HCECC Function Block Type">
+  <Identification Standard="61499-2" />
+  <VersionInfo Date="2007-06-26" Organization="University of Auckland" Author="GDS" Version="0.0" />
+  <CompilerInfo header="package fb.rt.benchmarks.cruisecontrol;" />
+  <InterfaceList>
+    <EventInputs>
+      <Event Name="cclock">
+        <With Var="time" />
+        <With Var="rotaryCount" />
+        <With Var="throttleOffset" />
+      </Event>
+      <Event Name="set">
+        <With Var="time" />
+        <With Var="rotaryCount" />
+        <With Var="throttleOffset" />
+      </Event>
+      <Event Name="off">
+        <With Var="time" />
+        <With Var="rotaryCount" />
+        <With Var="throttleOffset" />
+      </Event>
+      <Event Name="resume">
+        <With Var="time" />
+        <With Var="rotaryCount" />
+        <With Var="throttleOffset" />
+      </Event>
+      <Event Name="quickAccel">
+        <With Var="time" />
+        <With Var="rotaryCount" />
+        <With Var="throttleOffset" />
+      </Event>
+      <Event Name="quickDecel">
+        <With Var="time" />
+        <With Var="rotaryCount" />
+        <With Var="throttleOffset" />
+      </Event>
+      <Event Name="brakePressed">
+        <With Var="time" />
+        <With Var="rotaryCount" />
+        <With Var="throttleOffset" />
+      </Event>
+      <Event Name="accelPressed">
+        <With Var="time" />
+        <With Var="rotaryCount" />
+        <With Var="throttleOffset" />
+      </Event>
+      <Event Name="accelReleased">
+        <With Var="time" />
+        <With Var="rotaryCount" />
+        <With Var="throttleOffset" />
+      </Event>
+    </EventInputs>
+    <EventOutputs>
+      <Event Name="speed">
+        <With Var="speedVal" />
+        <With Var="cruiseSpeed" />
+        <With Var="throttleVal" />
+      </Event>
+      <Event Name="speedSet">
+        <With Var="speedVal" />
+        <With Var="cruiseSpeed" />
+        <With Var="throttleVal" />
+      </Event>
+      <Event Name="throttleChg">
+        <With Var="speedVal" />
+        <With Var="cruiseSpeed" />
+        <With Var="throttleVal" />
+      </Event>
+      <Event Name="regulOff">
+        <With Var="speedVal" />
+        <With Var="cruiseSpeed" />
+        <With Var="throttleVal" />
+      </Event>
+      <Event Name="regulStdby">
+        <With Var="speedVal" />
+        <With Var="cruiseSpeed" />
+        <With Var="throttleVal" />
+      </Event>
+      <Event Name="regulSet">
+        <With Var="speedVal" />
+        <With Var="cruiseSpeed" />
+        <With Var="throttleVal" />
+      </Event>
+      <Event Name="regulResume">
+        <With Var="speedVal" />
+        <With Var="cruiseSpeed" />
+        <With Var="throttleVal" />
+      </Event>
+    </EventOutputs>
+    <InputVars>
+      <VarDeclaration Name="time" Type="UDINT" Comment="10ms tick" />
+      <VarDeclaration Name="rotaryCount" Type="UINT" />
+      <VarDeclaration Name="throttleOffset" Type="SINT" />
+    </InputVars>
+    <OutputVars>
+      <VarDeclaration Name="speedVal" Type="INT" Comment="Output event qualifier" />
+      <VarDeclaration Name="cruiseSpeed" Type="INT" />
+      <VarDeclaration Name="throttleVal" Type="SINT" />
+    </OutputVars>
+  </InterfaceList>
+  <BasicFB>
+    <InternalVars>
+      <VarDeclaration Name="cruiseOn" Type="BOOL" Comment="Instead of event between Manager and Throttle"/>
+	  
+	  <VarDeclaration Name="prevOffset" Type="SINT" InitialValue="0" Comment="From throttle"/>
+      <VarDeclaration Name="tmp" Type="SINT" InitialValue="0" Comment="From throttle"/>
+	  
+	  
+	  <VarDeclaration Name="prevCount" Type="UINT" InitialValue="0" Comment="From SpeedGauge"/>
+      <VarDeclaration Name="prevTime" Type="UDINT" InitialValue="0" Comment="From SpeedGauge"/>
+      <VarDeclaration Name="count" Type="USINT" Comment="From SpeedGauge"/>
+	  
+	  <VarDeclaration Name="desiredSpeed" Type="INT" InitialValue="0" Comment="From Manager"/>
+    </InternalVars>
+    <HCECC>
+      <ECC Name="SpeedGauge">
+        <ECState x="547.3858" Name="START" Comment="Initial State" y="430.71902" />
+        <ECState x="564.7059" Name="CALC" y="811.7647">
+          <ECAction Output="speed" Algorithm="calcSpeed" />
+        </ECState>
+        <ECTransition x="564.7059" Destination="CALC" Source="START" y="617.64703" Condition="cclock" />
+        <ECTransition x="564.7059" Destination="CALC" Source="CALC" y="1058.8235" Condition="cclock" />
+      </ECC>
+      <ECC Name="CruiseManager">
+        <ECState x="2600.0" Name="OFF" Comment="Initial State" y="158.82353">
+          <ECAction Output="regulOff" Algorithm="off" />
+        </ECState>
+        <ECState x="1152.9412" Name="SET" y="1005.8823">
+          <ECAction Output="regulSet" Algorithm="set" />
+        </ECState>
+        <ECState x="3441.1765" Name="STDBY" y="1029.4117">
+          <ECAction Output="regulStdby" Algorithm="standby" />
+        </ECState>
+        <ECState x="3758.8235" Name="RESUME" y="417.64706">
+          <ECAction Output="regulResume" Algorithm="resume" />
+        </ECState>
+        <ECState x="311.7647" Name="ACCEL" y="2117.647">
+          <ECAction Output="speedSet" Algorithm="accel" />
+        </ECState>
+        <ECState x="2111.7646" Name="DECEL" y="1594.1177">
+          <ECAction Output="speedSet" Algorithm="decel" />
+        </ECState>
+        <ECTransition x="2052.9412" Destination="SET" Source="OFF" y="517.64703" Condition="set&#38;speedVal&#62;50&#38;speedVal&#60;170" />
+        <ECTransition x="1670.5883" Destination="OFF" Source="SET" y="411.7647" Condition="off" />
+        <ECTransition x="829.41174" Destination="SET" Source="SET" y="800.0" Condition="set&#38;speedVal&#62;50&#38;speedVal&#60;170" />
+        <ECTransition x="2488.2354" Destination="STDBY" Source="SET" y="1029.4117" Condition="brakePressed" />
+        <ECTransition x="1152.9412" Destination="ACCEL" Source="SET" y="1482.3529" Condition="quickAccel" />
+        <ECTransition x="1552.9412" Destination="DECEL" Source="SET" y="1347.0588" Condition="quickDecel" />
+        <ECTransition x="2894.1177" Destination="OFF" Source="STDBY" y="464.70587" Condition="off" />
+        <ECTransition x="2594.1177" Destination="SET" Source="STDBY" y="882.3529" Condition="set&#38;speedVal&#62;50&#38;speedVal&#60;170" />
+        <ECTransition x="3441.1765" Destination="RESUME" Source="STDBY" y="417.64706" Condition="resume" />
+        <ECTransition x="3264.7058" Destination="OFF" Source="RESUME" y="323.52942" Condition="off" />
+        <ECTransition x="2611.7646" Destination="SET" Source="RESUME" y="747.05884" Condition="set&#38;speedVal&#62;50&#38;speedVal&#60;170" />
+        <ECTransition x="3758.8235" Destination="STDBY" Source="RESUME" y="676.4706" Condition="brakePressed" />
+        <ECTransition x="5200.0" Destination="ACCEL" Source="RESUME" y="2117.647" Condition="quickAccel" />
+        <ECTransition x="2794.1177" Destination="DECEL" Source="RESUME" y="1294.1177" Condition="quickDecel" />
+        <ECTransition x="311.7647" Destination="OFF" Source="ACCEL" y="158.82353" Condition="off" />
+        <ECTransition x="723.5294" Destination="SET" Source="ACCEL" y="1282.3529" Condition="set&#38;speedVal&#62;50&#38;speedVal&#60;170" />
+        <ECTransition x="3441.1765" Destination="STDBY" Source="ACCEL" y="1858.8235" Condition="brakePressed" />
+        <ECTransition x="311.7647" Destination="ACCEL" Source="ACCEL" y="2341.1765" Condition="quickAccel" />
+        <ECTransition x="1305.8823" Destination="DECEL" Source="ACCEL" y="1788.2352" Condition="quickDecel" />
+        <ECTransition x="2600.0" Destination="OFF" Source="DECEL" y="500.0" Condition="off" />
+        <ECTransition x="1864.7058" Destination="SET" Source="DECEL" y="1170.5883" Condition="set&#38;speedVal&#62;50&#38;speedVal&#60;170" />
+        <ECTransition x="3141.1765" Destination="STDBY" Source="DECEL" y="1382.3529" Condition="brakePressed" />
+        <ECTransition x="1400.0" Destination="ACCEL" Source="DECEL" y="1923.5294" Condition="quickAccel" />
+        <ECTransition x="2111.7646" Destination="DECEL" Source="DECEL" y="1852.9412" Condition="quickDecel" />
+      </ECC>
+      <ECC Name="Throttle">
+        <ECState x="1558.8235" Name="NORMAL" y="405.88235">
+          <ECAction Output="throttleChg" Algorithm="normal" />
+        </ECState>
+        <ECState x="1576.4706" Name="CRUISE" y="1188.2352">
+          <ECAction Output="throttleChg" Algorithm="cruise" />
+        </ECState>
+        <ECState x="2688.2354" Name="ACCEL" y="782.3529">
+          <ECAction Output="throttleChg" Algorithm="carAccel" />
+        </ECState>
+        <ECTransition x="1323.5294" Destination="CRUISE" Source="NORMAL" y="817.64703" Condition="cruiseOn" />
+        <ECTransition x="1558.8235" Destination="NORMAL" Source="NORMAL" y="176.47058" Condition="accelPressed" />
+        <ECTransition x="1976.4706" Destination="NORMAL" Source="NORMAL" y="211.76471" Condition="accelReleased" />
+        <ECTransition x="1200.0" Destination="NORMAL" Source="NORMAL" y="405.88235" Condition="cclock" />
+        <ECTransition x="1817.647" Destination="NORMAL" Source="CRUISE" y="823.5294" Condition="!cruiseOn" />
+        <ECTransition x="2194.1177" Destination="ACCEL" Source="CRUISE" y="782.3529" Condition="accelPressed" />
+        <ECTransition x="1152.9412" Destination="CRUISE" Source="CRUISE" y="1188.2352" Condition="cruiseOn" />
+        <ECTransition x="1576.4706" Destination="CRUISE" Source="CRUISE" y="1423.5294" Condition="quickAccel" />
+		<ECTransition x="1576.4706" Destination="CRUISE" Source="CRUISE" y="1423.5294" Condition="quickDecel" />
+        <ECTransition x="1841.1764" Destination="CRUISE" Source="CRUISE" y="1376.4706" Condition="cclock" />
+        <ECTransition x="2158.8235" Destination="NORMAL" Source="ACCEL" y="641.17645" Condition="!cruiseOn" />
+        <ECTransition x="2688.2354" Destination="CRUISE" Source="ACCEL" y="917.64703" Condition="accelReleased" />
+        <ECTransition x="2688.2354" Destination="ACCEL" Source="ACCEL" y="605.8823" Condition="cclock" />
+      </ECC>
+    </HCECC>
+    <Algorithm Name="calcSpeed">
+      <ST Text="IF rotaryCount &#62;= prevCount THEN&#10;    count := rotaryCount - prevCount;&#10;ELSE&#10;    count := 1000 + rotaryCount - prevCount;&#10;END_IF;&#10;&#10;IF speedVal = 0 THEN&#10;    speedVal := (count * 7012) / 10000;&#10;ELSE&#10;    speedVal := (count * 7012) / 10000;&#10;END_IF;&#10;&#10;prevTime := time;&#10;prevCount := rotaryCount;&#10;" />
+    </Algorithm>
+	<Algorithm Name="off" >
+		<ST Text="desiredSpeed := 0;&#10;cruiseSpeed := 0;&#10;cruiseOn := FALSE;&#10;" />
+	</Algorithm>
+	<Algorithm Name="set" >
+		<ST Text="desiredSpeed := speedVal;&#10;cruiseSpeed := desiredSpeed;&#10;cruiseOn := TRUE;&#10;" />
+	</Algorithm>
+	<Algorithm Name="resume" >
+		<ST Text="cruiseSpeed := desiredSpeed;&#10;cruiseOn := TRUE;&#10;" />
+	</Algorithm>
+	<Algorithm Name="standby" >
+		<ST Text="cruiseSpeed := 0;&#10;cruiseOn := FALSE;&#10;" />
+    </Algorithm>
+    <Algorithm Name="accel">
+      <ST Text="IF desiredSpeed &#60; 165 THEN &#10;    desiredSpeed := desiredSpeed + 5;&#10;    cruiseSpeed := desiredSpeed;&#10;END_IF;&#10;" />
+    </Algorithm>
+    <Algorithm Name="decel">
+      <ST Text="IF desiredSpeed &#62;= 5 THEN &#10;    desiredSpeed := desiredSpeed - 5;&#10;    cruiseSpeed := desiredSpeed;&#10;ELSE desiredSpeed := 0;&#10; END_IF;&#10;" />
+    </Algorithm>
+    <Algorithm Name="normal">
+      <ST Text="throttleVal := throttleOffset;&#10;prevOffset := 0;&#10;" />
+    </Algorithm>
+    <Algorithm Name="carAccel">
+      <ST Text="throttleVal := throttleVal + throttleOffset - prevOffset;&#10;prevOffset := throttleOffset;&#10;" />
+    </Algorithm>
+    <Algorithm Name="cruise">
+      <ST Text="tmp := (cruiseSpeed - speedVal);&#10;tmp := tmp * 3;&#10; IF tmp &#62; 45 THEN&#10;    tmp := 45;&#10;ELSIF tmp &#60; 0 THEN&#10;    tmp := 0;&#10; END_IF;&#10; throttleVal := tmp;&#10;" />
+    </Algorithm>
+  </BasicFB>
+</FBType>

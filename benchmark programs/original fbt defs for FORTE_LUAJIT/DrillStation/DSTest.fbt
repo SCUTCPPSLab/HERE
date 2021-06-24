@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd" >
+<FBType Name="DSTest" >
+  <Identification Standard="61499-2" />
+  <VersionInfo Organization="Rockwell Automation" Version="0.2" Author="JHC" Date="2003-12-05" Remarks="Renamed from NEWCOMPFB." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.1" Author="JHC" Date="2002-01-08" Remarks="Added DLY FB as example." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.0" Author="JHC" Date="2000-05-27" />
+  <CompilerInfo header="package fb.rt.projects.DrillStation;" >
+  </CompilerInfo>
+  <InterfaceList>
+    <EventInputs>
+      <Event Name="INIT" Comment="Initialization Request" >
+      </Event>
+      <Event Name="TICK" Comment="Normal Execution Request" >
+      </Event>
+    </EventInputs>
+  </InterfaceList>
+  <FBNetwork >
+    <FB Name="Drill" Type="Drill" x="2723.5293" y="400.0" />
+    <FB Name="Slider" Type="Slider" x="1270.5883" y="288.2353" />
+    <FB Name="ServiceInterface" Type="DSInterface" x="417.64706" y="1488.2352" />
+    <EventConnections>
+      <Connection Source="Drill.Status" Destination="Slider.DrillStat" dx1="135.29411" dx2="594.1176" dy="-358.82352" />
+      <Connection Source="Drill.Done" Destination="Slider.FinishDrill" dx1="76.47059" dx2="505.88235" dy="-411.7647" />
+      <Connection Source="Slider.InPlace" Destination="Drill.REQ" dx1="217.64705" />
+      <Connection Source="ServiceInterface.REQ" Destination="Slider.REQ" dx1="123.52941" />
+      <Connection Source="ServiceInterface.SlideTime" Destination="Slider.SlideTime" dx1="200.0" />
+      <Connection Source="ServiceInterface.DrillMove" Destination="Drill.DrillMove" dx1="1570.5883" />
+      <Connection Source="ServiceInterface.DrillDone" Destination="Drill.DrillDone" dx1="1694.1177" />
+      <Connection Source="INIT" Destination="ServiceInterface.INIT" dx1="311.7647" />
+      <Connection Source="TICK" Destination="ServiceInterface.RUN" dx1="305.88235" />
+    </EventConnections>
+    <DataConnections>
+      <Connection Source="Drill.UP_DOWN" Destination="Slider.ReadyNot" dx1="88.23529" dx2="88.23529" dy="258.82352" />
+    </DataConnections>
+  </FBNetwork>
+</FBType>

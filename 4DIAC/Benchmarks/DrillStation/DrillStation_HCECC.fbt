@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE FBType SYSTEM "HCECC.dtd">
+<FBType Name="DrillStation_HCECC" Comment="Model a conveyor">
+  <Identification Standard="61499-2" />
+  <VersionInfo Date="2003-12-04" Organization="Rockwell Automation" Author="JHC" Remarks="Renamed for better indexing." Version="0.2" />
+  <CompilerInfo header="package fb.rt.benchmarks.DrillStation;" />
+  <InterfaceList>
+    <EventInputs>
+      <Event Name="INIT" Comment="Initialization Request" />
+      <Event Name="REQ" Comment="Normal Execution Request" />
+      <Event Name="SlideTime" />
+      <Event Name="DrillMove" />
+      <Event Name="DrillComplete" />
+    </EventInputs>
+    <EventOutputs>
+      <Event Name="SliderStatus">
+        <With Var="SliderOpenClose" />
+      </Event>
+    </EventOutputs>
+    <OutputVars>
+      <VarDeclaration Name="SliderOpenClose" Type="BOOL" />
+    </OutputVars>
+  </InterfaceList>
+  <BasicFB>
+    <InternalVars>
+      <VarDeclaration Name="ReadyNot" Type="BOOL" Comment="ready: true, not ready: false" />
+      <VarDeclaration Name="OpenClose" InitialValue="true" Type="BOOL" Comment="true: open, false: close" />
+      <VarDeclaration Name="UP_DOWN" InitialValue="true" Type="BOOL" Comment="true: up, false: down" />
+      <VarDeclaration Name="DrillStart" InitialValue="false" Type="BOOL" Comment="" />
+      <VarDeclaration Name="DrillDone" InitialValue="false" Type="BOOL" Comment="" />
+    </InternalVars>
+    <HCECC>
+      <ECC Name="Drill">
+        <ECState x="552.94116" Name="START" Comment="Initial State" y="429.41174">
+          <ECAction Algorithm="INITDrill" />
+        </ECState>
+        <ECState x="1047.0588" Name="REQ" Comment="Normal execution" y="805.8823">
+          <ECAction Algorithm="MovingDown" />
+        </ECState>
+        <ECState x="1058.8235" Name="Done" y="1564.7058">
+          <ECAction Algorithm="SetDrillDone" />
+        </ECState>
+        <ECState x="1047.0588" Name="Drilling" y="1164.7058" />
+        <ECTransition x="805.8823" Destination="REQ" Source="START" y="600.0" Condition="DrillStart" />
+        <ECTransition x="552.94116" Destination="START" Source="Done" y="1564.7058" Condition="DrillMove" />
+        <ECTransition x="1047.0588" Destination="Drilling" Source="REQ" y="970.5882" Condition="DrillMove" />
+        <ECTransition x="1058.8235" Destination="Done" Source="Drilling" y="1341.1764" Condition="DrillComplete" />
+      </ECC>
+      <ECC Name="Slider">
+        <ECState x="558.82355" Name="START" Comment="Initial State" y="164.70587">
+          <ECAction Output="SliderStatus" Algorithm="INITSlider" />
+        </ECState>
+        <ECState x="1005.8823" Name="REQ" Comment="Normal execution" y="541.17645">
+          <ECAction Output="SliderStatus" Algorithm="REQSlider" />
+        </ECState>
+        <ECState x="1005.8823" Name="Drilling" y="876.4706">
+          <ECAction Algorithm="DrillStart" />
+        </ECState>
+        <ECState x="1005.8823" Name="ReturnSlide" y="1252.9412" />
+        <ECState x="1005.8823" Name="WaitForDrill" y="1676.4706" />
+        <ECTransition x="776.4706" Destination="REQ" Source="START" y="335.2941" Condition="REQ" />
+        <ECTransition x="1005.8823" Destination="Drilling" Source="REQ" y="682.3529" Condition="SlideTime" />
+        <ECTransition x="1005.8823" Destination="ReturnSlide" Source="Drilling" y="1047.0588" Condition="DrillComplete" />
+        <ECTransition x="1005.8823" Destination="WaitForDrill" Source="ReturnSlide" y="1423.5294" Condition="SlideTime" />
+        <ECTransition x="558.82355" Destination="START" Source="WaitForDrill" y="1188.2352" Condition="UP_DOWN" />
+      </ECC>
+    </HCECC>
+    <Algorithm Name="INITDrill" Comment="Initialization algorithm">
+      <ST Text="UP_DOWN := TRUE;&#10;" />
+    </Algorithm>
+    <Algorithm Name="MovingDown" Comment="Normally executed algorithm">
+      <ST Text="UP_DOWN := FALSE;&#10;DrillStart := FALSE;&#10;" />
+    </Algorithm>
+    <Algorithm Name="SetDrillDone" Comment="Initialization algorithm">
+      <ST Text="DrillDone := TRUE;&#10;" />
+    </Algorithm>
+    <Algorithm Name="INITSlider" Comment="Initialization algorithm">
+      <ST Text="OpenClose := TRUE;&#10;" />
+    </Algorithm>
+    <Algorithm Name="REQSlider" Comment="Normally executed algorithm">
+      <ST Text="OpenClose := FALSE;&#10;" />
+    </Algorithm>
+    <Algorithm Name="DrillStart" Comment="Initialization algorithm">
+      <ST Text="DrillStart := TRUE;&#10;" />
+    </Algorithm>
+  </BasicFB>
+</FBType>

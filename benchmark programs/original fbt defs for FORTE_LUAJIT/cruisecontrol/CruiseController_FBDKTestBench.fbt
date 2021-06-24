@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd" >
+<FBType Name="CruiseController_FBDKTestBench" Comment="Composite Function Block Type" >
+  <Identification Standard="61499-2" />
+  <VersionInfo Organization="Rockwell Automation" Version="0.2" Author="JHC" Date="2003-12-05" Remarks="Renamed from NEWCOMPFB." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.1" Author="JHC" Date="2002-01-08" Remarks="Added DLY FB as example." />
+  <VersionInfo Organization="Rockwell Automation" Version="0.0" Author="JHC" Date="2000-05-27" />
+  <CompilerInfo header="package fb.rt.benchmarks.cruisecontrol;" >
+  </CompilerInfo>
+  <InterfaceList>
+    <EventInputs>
+      <Event Name="INIT" Comment="Initialization Request" >
+      </Event>
+    </EventInputs>
+  </InterfaceList>
+  <FBNetwork >
+    <FB Name="Interface" Type="CruiseController_FBDKInterface" x="1105.5555" y="461.11108" />
+    <FB Name="UUT" Type="CruiseControl" x="3066.6665" y="461.11108" />
+    <EventConnections>
+      <Connection Source="Interface.cclock" Destination="UUT.cclock" dx1="1122.2222" />
+      <Connection Source="Interface.set" Destination="UUT.set" dx1="1050.0" />
+      <Connection Source="Interface.off" Destination="UUT.off" dx1="977.7777" />
+      <Connection Source="Interface.resume" Destination="UUT.resume" dx1="911.1111" />
+      <Connection Source="Interface.quickAccel" Destination="UUT.quickAccel" dx1="838.88885" />
+      <Connection Source="Interface.quickDecel" Destination="UUT.quickDecel" dx1="766.6666" />
+      <Connection Source="Interface.brakePressed" Destination="UUT.brakePressed" dx1="700.0" />
+      <Connection Source="Interface.accelPressed" Destination="UUT.accelPressed" dx1="627.7778" />
+      <Connection Source="Interface.accelReleased" Destination="UUT.accelReleased" dx1="555.55554" />
+      <Connection Source="INIT" Destination="Interface.INIT" dx1="999.99994" />
+    </EventConnections>
+    <DataConnections>
+      <Connection Source="Interface.time" Destination="UUT.time" dx1="344.44443" />
+      <Connection Source="Interface.rotaryCount" Destination="UUT.rotaryCount" dx1="277.77777" />
+      <Connection Source="Interface.throttleOffset" Destination="UUT.throttleOffset" dx1="205.55554" />
+    </DataConnections>
+  </FBNetwork>
+</FBType>
