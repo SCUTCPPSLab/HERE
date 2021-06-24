@@ -1,6 +1,6 @@
 Introduction
 ============
-This folder contains models and source code used for benchmarking in the paper entitled *Hybrid Synchronous-Asynchronous Execution of Reconfigurable PLC Programs in Edge Computing* accepted by IEEE TII. This archive provides all information needed to recreate the performance evaluations presented in the paper including the following:
+This folder contains models and source code used for benchmarking in the paper entitled *Hybrid Synchronous-Asynchronous Execution of Reconfigurable PLC Programs in Edge Computing* accepted by IEEE TII (doi: 10.1109/TII.2021.3092741). This archive provides all information needed to recreate the performance evaluations presented in the paper including the following:
 
 1. 4DIAC project, including all function blocks type definitions (*.fbt files). 
 2. Function blocks type definitions modified for TCC just-in-time compiling.
